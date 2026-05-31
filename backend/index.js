@@ -12,9 +12,7 @@ app.get('/logout',(req,res)=>{
     res.send('thsis is logout page')
 })
 
-app.get('/logout',(req,res)=>{
-    res.send('thsis is logout page')
-})
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
