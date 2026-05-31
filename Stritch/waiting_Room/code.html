@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Waiting Room - ScreenBridge</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface-variant": "#c2c6d6",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "tertiary": "#89ceff",
+                      "on-primary": "#002e6a",
+                      "tertiary-container": "#009ada",
+                      "secondary": "#d0bcff",
+                      "on-tertiary": "#00344d",
+                      "on-secondary-fixed": "#23005c",
+                      "on-secondary": "#3c0091",
+                      "surface-bright": "#33394c",
+                      "primary": "#adc6ff",
+                      "outline": "#8c909f",
+                      "surface-container-low": "#151b2d",
+                      "surface-variant": "#2e3447",
+                      "inverse-primary": "#005ac2",
+                      "on-tertiary-container": "#002d43",
+                      "tertiary-fixed-dim": "#89ceff",
+                      "surface-container-high": "#23293c",
+                      "on-background": "#dce1fb",
+                      "outline-variant": "#424754",
+                      "secondary-container": "#571bc1",
+                      "tertiary-fixed": "#c9e6ff",
+                      "secondary-fixed": "#e9ddff",
+                      "on-tertiary-fixed-variant": "#004c6e",
+                      "surface": "#0c1324",
+                      "secondary-fixed-dim": "#d0bcff",
+                      "primary-fixed-dim": "#adc6ff",
+                      "error-container": "#93000a",
+                      "on-primary-fixed": "#001a42",
+                      "surface-container-highest": "#2e3447",
+                      "inverse-on-surface": "#2a3043",
+                      "on-tertiary-fixed": "#001e2f",
+                      "on-primary-fixed-variant": "#004395",
+                      "on-primary-container": "#00285d",
+                      "surface-container-lowest": "#070d1f",
+                      "primary-container": "#4d8eff",
+                      "background": "#0c1324",
+                      "on-secondary-container": "#c4abff",
+                      "primary-fixed": "#d8e2ff",
+                      "on-surface": "#dce1fb",
+                      "inverse-surface": "#dce1fb",
+                      "on-error-container": "#ffdad6",
+                      "surface-dim": "#0c1324",
+                      "on-error": "#690005",
+                      "surface-tint": "#adc6ff",
+                      "surface-container": "#191f31",
+                      "error": "#ffb4ab"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "margin-desktop": "80px",
+                      "unit": "4px",
+                      "margin-mobile": "20px",
+                      "margin-tablet": "40px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "label-md": [
+                              "JetBrains Mono"
+                      ],
+                      "body-md": [
+                              "Geist"
+                      ],
+                      "label-sm": [
+                              "JetBrains Mono"
+                      ],
+                      "headline-lg": [
+                              "Geist"
+                      ],
+                      "display-lg-mobile": [
+                              "Geist"
+                      ],
+                      "display-lg": [
+                              "Geist"
+                      ],
+                      "headline-xl": [
+                              "Geist"
+                      ],
+                      "body-lg": [
+                              "Geist"
+                      ]
+              },
+              "fontSize": {
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg": [
+                              "64px",
+                              {
+                                      "lineHeight": "72px",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-xl": [
+                              "36px",
+                              {
+                                      "lineHeight": "44px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .glass-panel {
+            background-color: rgba(12, 19, 36, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-pulse {
+            animation: pulse-glow 3s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 20px rgba(173, 198, 255, 0.1); border-color: rgba(173, 198, 255, 0.2); }
+            100% { box-shadow: 0 0 40px rgba(173, 198, 255, 0.3); border-color: rgba(173, 198, 255, 0.5); }
+        }
+        .signal-wave {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: dash 2s linear infinite;
+        }
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+        .bg-grid-pattern {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+      </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar (Shared Component) -->
+<!-- Suppressed active navigation highlight as this is a transient "Waiting Room" state, not a main destination -->
+<header class="fixed top-0 w-full z-50 bg-surface/40 backdrop-blur-xl border-b border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] h-20">
+<div class="flex justify-between items-center px-margin-desktop h-full max-w-container-max mx-auto">
+<!-- Brand -->
+<div class="flex items-center gap-2 scale-95 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">cast</span>
+<span class="font-headline-xl text-headline-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-tertiary">ScreenBridge</span>
+</div>
+<!-- Navigation Links (Hidden on mobile) -->
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-label-md text-label-md hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Dashboard</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-label-md text-label-md hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Rooms</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-label-md text-label-md hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">History</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-label-md text-label-md hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Devices</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="hidden md:block font-label-md text-label-md text-primary border border-primary/30 bg-primary/5 hover:bg-primary/10 rounded-lg px-4 py-2 transition-colors scale-95 active:scale-90">Join Room</button>
+<button class="font-label-md text-label-md text-background bg-gradient-to-r from-primary to-tertiary hover:opacity-90 rounded-lg px-4 py-2 font-bold shadow-[0_0_15px_rgba(173,198,255,0.3)] transition-all scale-95 active:scale-90">Host Now</button>
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden border border-white/10 ml-2 cursor-pointer hover:border-primary/50 transition-colors">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIRLgEiJVqw8narSI2_QQysiz6JpOrnMNtvuaFDEATdYAoyjhdL4bQyly-qt_QAFIya5Ro1r60WC2kVTxr9lGdQ7aOcZpwx9QtOL3M5bwKjfwdLtuypFvSuTnjS17bKImRIuBlSCVLE8iqROCFb2beTmMt3IpKdEAVu8KhQ_aEmvpJQWYqOlgxS5tngMGTrO7CUSKenuuDbz147z0-RlWh9tioo_WoLBusw_biwhLvpw-H-4HBxFUvNLWsguc8s-jWhWwmRmTEzTjl"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex items-center justify-center pt-20 relative overflow-hidden bg-grid-pattern">
+<!-- Ambient Background Glow -->
+<div class="absolute inset-0 z-0 flex items-center justify-center pointer-events-none opacity-30">
+<div class="w-[800px] h-[800px] rounded-full bg-primary/20 blur-[150px]"></div>
+</div>
+<div class="relative z-10 w-full max-w-2xl px-margin-mobile md:px-0">
+<!-- Waiting Room Card -->
+<div class="glass-panel rounded-2xl p-12 text-center glow-pulse flex flex-col items-center shadow-2xl relative overflow-hidden">
+<!-- Decorative scanline effect -->
+<div class="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px] opacity-20 pointer-events-none"></div>
+<!-- Connectivity Animation Graphic -->
+<div class="relative w-48 h-48 mb-8 flex justify-center items-center">
+<!-- Center Device Hub -->
+<div class="absolute z-20 w-16 h-16 bg-surface-container-high rounded-full border border-primary/50 shadow-[0_0_30px_rgba(173,198,255,0.4)] flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl animate-pulse" style="font-variation-settings: 'FILL' 1;">router</span>
+</div>
+<!-- Orbiting Nodes -->
+<div class="absolute w-full h-full animate-[spin_10s_linear_infinite]">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-tertiary rounded-full shadow-[0_0_10px_rgba(137,206,255,0.8)]"></div>
+</div>
+<div class="absolute w-3/4 h-3/4 animate-[spin_7s_linear_infinite_reverse]">
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary rounded-full shadow-[0_0_10px_rgba(208,188,255,0.8)]"></div>
+</div>
+<!-- SVG Connection Waves -->
+<svg class="absolute inset-0 w-full h-full text-primary/30" viewbox="0 0 100 100">
+<circle class="signal-wave opacity-50" cx="50" cy="50" fill="none" r="30" stroke="currentColor" stroke-width="1"></circle>
+<circle class="animate-[spin_20s_linear_infinite]" cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="4 4" stroke-width="0.5"></circle>
+</svg>
+</div>
+<!-- Text Content -->
+<h1 class="font-headline-lg text-headline-lg mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-on-surface-variant">
+                    Waiting for Host Connection
+                </h1>
+<p class="font-body-md text-on-surface-variant mb-8 max-w-md mx-auto">
+                    Establishing secure, zero-latency tunnel. The presentation will begin automatically once the host initiates screen sharing.
+                </p>
+<!-- Status indicators -->
+<div class="flex items-center gap-6 mb-8 font-label-sm text-label-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="text-on-surface-variant uppercase tracking-widest">Network Secure</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-white/20"></div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span class="uppercase tracking-widest">E2E Encrypted</span>
+</div>
+</div>
+<!-- Secondary Actions -->
+<div class="flex gap-4">
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-white bg-surface-container-high/50 hover:bg-surface-container-high border border-white/5 rounded-lg px-6 py-2 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+                        Audio Settings
+                    </button>
+<button class="font-label-md text-label-md text-error hover:text-error-container bg-error/10 hover:bg-error/20 rounded-lg px-6 py-2 transition-colors">
+                        Leave Room
+                    </button>
+</div>
+</div>
+<!-- Footer Details -->
+<div class="text-center mt-8 font-label-sm text-label-sm text-on-surface-variant/50">
+                Session ID: <span class="font-mono ml-1">SB-994-X8A</span>
+</div>
+</div>
+</main>
+</body></html>

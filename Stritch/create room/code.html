@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Room - ScreenBridge</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-surface-variant": "#c2c6d6",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "tertiary": "#89ceff",
+                        "on-primary": "#002e6a",
+                        "tertiary-container": "#009ada",
+                        "secondary": "#d0bcff",
+                        "on-tertiary": "#00344d",
+                        "on-secondary-fixed": "#23005c",
+                        "on-secondary": "#3c0091",
+                        "surface-bright": "#33394c",
+                        "primary": "#adc6ff",
+                        "outline": "#8c909f",
+                        "surface-container-low": "#151b2d",
+                        "surface-variant": "#2e3447",
+                        "inverse-primary": "#005ac2",
+                        "on-tertiary-container": "#002d43",
+                        "tertiary-fixed-dim": "#89ceff",
+                        "surface-container-high": "#23293c",
+                        "on-background": "#dce1fb",
+                        "outline-variant": "#424754",
+                        "secondary-container": "#571bc1",
+                        "tertiary-fixed": "#c9e6ff",
+                        "secondary-fixed": "#e9ddff",
+                        "on-tertiary-fixed-variant": "#004c6e",
+                        "surface": "#0c1324",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "error-container": "#93000a",
+                        "on-primary-fixed": "#001a42",
+                        "surface-container-highest": "#2e3447",
+                        "inverse-on-surface": "#2a3043",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-primary-container": "#00285d",
+                        "surface-container-lowest": "#070d1f",
+                        "primary-container": "#4d8eff",
+                        "background": "#0c1324",
+                        "on-secondary-container": "#c4abff",
+                        "primary-fixed": "#d8e2ff",
+                        "on-surface": "#dce1fb",
+                        "inverse-surface": "#dce1fb",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#0c1324",
+                        "on-error": "#690005",
+                        "surface-tint": "#adc6ff",
+                        "surface-container": "#191f31",
+                        "error": "#ffb4ab"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "gutter": "24px",
+                        "margin-desktop": "80px",
+                        "unit": "4px",
+                        "margin-mobile": "20px",
+                        "margin-tablet": "40px",
+                        "container-max": "1440px"
+                    },
+                    fontFamily: {
+                        "label-md": ["JetBrains Mono"],
+                        "body-md": ["Geist"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-lg": ["Geist"],
+                        "display-lg-mobile": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "headline-xl": ["Geist"],
+                        "body-lg": ["Geist"]
+                    },
+                    fontSize: {
+                        "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "500" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.1em", fontWeight: "500" }],
+                        "headline-lg": ["28px", { lineHeight: "36px", fontWeight: "600" }],
+                        "display-lg-mobile": ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "display-lg": ["64px", { lineHeight: "72px", letterSpacing: "-0.04em", fontWeight: "700" }],
+                        "headline-xl": ["36px", { lineHeight: "44px", letterSpacing: "-0.02em", fontWeight: "600" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Atmospheric background effects */
+        .ambient-glow {
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(173, 198, 255, 0.05) 0%, rgba(12, 19, 36, 0) 70%);
+            top: -200px;
+            right: -200px;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .ambient-glow-2 {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(137, 206, 255, 0.03) 0%, rgba(12, 19, 36, 0) 70%);
+            bottom: -100px;
+            left: -100px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Level 1 Base */
+        .glass-panel {
+            background-color: rgba(12, 19, 36, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Animated connection dots background */
+        .grid-bg {
+            background-image: 
+                radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen relative selection:bg-primary-container selection:text-on-primary-container">
+<!-- Atmospheric Backgrounds -->
+<div class="ambient-glow"></div>
+<div class="ambient-glow-2"></div>
+<div class="fixed inset-0 grid-bg z-0 pointer-events-none opacity-50"></div>
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 fixed left-0 top-0 z-40 border-r border-white/5 shadow-2xl bg-surface-container-low/60 backdrop-blur-2xl flex flex-col p-gutter gap-4 hidden md:flex">
+<!-- Header -->
+<div class="flex items-center gap-4 px-4 py-6">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-surface font-bold text-xl" data-icon="hub" data-weight="fill">hub</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-lg text-[18px] leading-tight font-bold text-primary tracking-tight">ScreenBridge HQ</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Enterprise Pro</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 flex flex-col gap-1 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:translate-x-1 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors" data-icon="grid_view">grid_view</span>
+<span class="font-label-md text-label-md group-hover:text-on-surface transition-colors">Home</span>
+</a>
+<!-- Active State: Semantic Match for "Rooms" / Connections -->
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container/20 text-primary border-l-4 border-primary rounded-r-full hover:translate-x-1 transition-all duration-200 opacity-80 group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="cast_connected" data-weight="fill">cast_connected</span>
+<span class="font-label-md text-label-md font-bold">Connections</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:translate-x-1 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors" data-icon="bar_chart">bar_chart</span>
+<span class="font-label-md text-label-md group-hover:text-on-surface transition-colors">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:translate-x-1 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors" data-icon="group">group</span>
+<span class="font-label-md text-label-md group-hover:text-on-surface transition-colors">Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:translate-x-1 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md group-hover:text-on-surface transition-colors">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 hover:translate-x-1 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors" data-icon="help">help</span>
+<span class="font-label-md text-label-md group-hover:text-on-surface transition-colors">Support</span>
+</a>
+</nav>
+<!-- Action / Footer -->
+<div class="mt-auto flex flex-col gap-4">
+<button class="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-primary/10 to-transparent border border-primary/30 text-primary font-label-md text-label-md hover:bg-primary/20 transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(173,198,255,0.1)]">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                New Connection
+            </button>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-white/5 transition-colors group mt-2 border-t border-white/5 pt-4" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 relative z-10 min-h-screen flex flex-col px-margin-mobile md:px-margin-desktop py-12">
+<!-- Header -->
+<header class="mb-12 flex flex-col gap-2">
+<h1 class="font-headline-xl text-headline-xl text-primary font-bold tracking-tight">Create Session Room</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Generate a secure, zero-latency environment for instant wireless collaboration. Share this unique code with your team to establish connection.</p>
+</header>
+<!-- Bento Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 h-full">
+<!-- Main Generator Card (Spans 8 cols) -->
+<div class="lg:col-span-8 glass-panel rounded-xl flex flex-col relative group">
+<!-- Decorative top-left highlight -->
+<div class="absolute top-0 left-0 w-32 h-[1px] bg-gradient-to-r from-primary to-transparent"></div>
+<div class="absolute top-0 left-0 w-[1px] h-32 bg-gradient-to-b from-primary to-transparent"></div>
+<div class="p-8 border-b border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary/10 border border-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="router">router</span>
+</div>
+<h2 class="font-headline-lg text-[20px] text-on-surface">Transmission Signal</h2>
+</div>
+<span class="px-3 py-1 rounded-full bg-emerald-500/10 border-l-2 border-emerald-500 text-emerald-400 font-label-sm text-label-sm flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Network Ready
+                    </span>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center p-12 text-center relative overflow-hidden">
+<!-- Central visual element behind code -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[60px] pointer-events-none"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-4 uppercase tracking-[0.2em]">Unique Room Identifier</p>
+<div class="relative group cursor-copy" title="Click to copy">
+<div class="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
+<div class="font-label-md text-[4rem] md:text-[5.5rem] leading-none tracking-wider text-white relative z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" style="font-family: 'JetBrains Mono', monospace;">
+                            SB-<span class="text-primary">8X4</span>-V9
+                        </div>
+</div>
+<div class="mt-12 flex flex-col sm:flex-row items-center gap-4 w-full max-w-md">
+<button class="flex-1 w-full glass-panel border-white/10 hover:bg-white/5 hover:border-white/20 transition-all duration-300 py-3.5 px-6 rounded-lg flex items-center justify-center gap-2 text-on-surface font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+                            Copy Room Link
+                        </button>
+<button class="flex-1 w-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1D4ED8] hover:to-[#2563EB] py-3.5 px-6 rounded-lg flex items-center justify-center gap-2 text-white font-label-md text-label-md font-bold shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] transition-all duration-300">
+<span class="material-symbols-outlined text-[18px]" data-icon="sensors" data-weight="fill">sensors</span>
+                            Start Sharing
+                        </button>
+</div>
+</div>
+</div>
+<!-- Side column for settings/info (Spans 4 cols) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Security Settings Card -->
+<div class="glass-panel rounded-xl p-6 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-outline" data-icon="admin_panel_settings">admin_panel_settings</span>
+<h3 class="font-label-md text-[16px] text-on-surface">Security Protocol</h3>
+</div>
+<div class="flex flex-col gap-5">
+<label class="flex items-center justify-between cursor-pointer group/toggle">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface">Waiting Room</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Admit participants manually</span>
+</div>
+<div class="relative w-11 h-6 bg-surface-container-high rounded-full border border-white/10 transition-colors group-hover/toggle:border-white/20">
+<div class="absolute left-[2px] top-[2px] bg-outline-variant w-5 h-5 rounded-full transition-transform"></div>
+</div>
+</label>
+<div class="h-[1px] w-full bg-white/5"></div>
+<label class="flex items-center justify-between cursor-pointer group/toggle">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface">Passcode Lock</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Require PIN to join</span>
+</div>
+<div class="relative w-11 h-6 bg-primary/20 border border-primary/50 rounded-full transition-colors shadow-[0_0_10px_rgba(173,198,255,0.2)]">
+<div class="absolute left-[22px] top-[2px] bg-primary w-5 h-5 rounded-full transition-transform shadow-[0_0_5px_rgba(173,198,255,0.8)]"></div>
+</div>
+</label>
+<!-- Collapsed Passcode Input -->
+<div class="mt-2 bg-surface-container-highest/50 rounded-lg border border-white/5 p-3 flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary tracking-widest">9402</span>
+<button class="text-on-surface-variant hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="refresh">refresh</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Info/Hardware Card -->
+<div class="glass-panel rounded-xl p-6 flex-1 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[120px]" data-icon="devices">devices</span>
+</div>
+<div>
+<h3 class="font-label-md text-[16px] text-on-surface mb-2">Hardware Target</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant leading-relaxed">Ensure the receiving display or projector is connected to the same local network, or use a ScreenBridge Dongle for standalone casting.</p>
+</div>
+<a class="inline-flex items-center gap-2 text-primary hover:text-inverse-primary font-label-md text-label-sm transition-colors mt-6 w-fit border-b border-transparent hover:border-inverse-primary pb-0.5" href="#">
+                        View compatibility matrix
+                        <span class="material-symbols-outlined text-[14px]" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ScreenBridge - Join Room</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-surface-variant": "#c2c6d6",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "tertiary": "#89ceff",
+                        "on-primary": "#002e6a",
+                        "tertiary-container": "#009ada",
+                        "secondary": "#d0bcff",
+                        "on-tertiary": "#00344d",
+                        "on-secondary-fixed": "#23005c",
+                        "on-secondary": "#3c0091",
+                        "surface-bright": "#33394c",
+                        "primary": "#adc6ff",
+                        "outline": "#8c909f",
+                        "surface-container-low": "#151b2d",
+                        "surface-variant": "#2e3447",
+                        "inverse-primary": "#005ac2",
+                        "on-tertiary-container": "#002d43",
+                        "tertiary-fixed-dim": "#89ceff",
+                        "surface-container-high": "#23293c",
+                        "on-background": "#dce1fb",
+                        "outline-variant": "#424754",
+                        "secondary-container": "#571bc1",
+                        "tertiary-fixed": "#c9e6ff",
+                        "secondary-fixed": "#e9ddff",
+                        "on-tertiary-fixed-variant": "#004c6e",
+                        "surface": "#0c1324",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "primary-fixed-dim": "#adc6ff",
+                        "error-container": "#93000a",
+                        "on-primary-fixed": "#001a42",
+                        "surface-container-highest": "#2e3447",
+                        "inverse-on-surface": "#2a3043",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-primary-container": "#00285d",
+                        "surface-container-lowest": "#070d1f",
+                        "primary-container": "#4d8eff",
+                        "background": "#0c1324",
+                        "on-secondary-container": "#c4abff",
+                        "primary-fixed": "#d8e2ff",
+                        "on-surface": "#dce1fb",
+                        "inverse-surface": "#dce1fb",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#0c1324",
+                        "on-error": "#690005",
+                        "surface-tint": "#adc6ff",
+                        "surface-container": "#191f31",
+                        "error": "#ffb4ab"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "gutter": "24px",
+                        "margin-desktop": "80px",
+                        "unit": "4px",
+                        "margin-mobile": "20px",
+                        "margin-tablet": "40px",
+                        "container-max": "1440px"
+                    },
+                    fontFamily: {
+                        "label-md": ["JetBrains Mono"],
+                        "body-md": ["Geist"],
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-lg": ["Geist"],
+                        "display-lg-mobile": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "headline-xl": ["Geist"],
+                        "body-lg": ["Geist"]
+                    },
+                    fontSize: {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #020617; /* Obsidian base */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(137, 206, 255, 0.05), transparent 25%);
+        }
+        
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background-color: rgba(12, 19, 36, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-card {
+            background-color: rgba(12, 19, 36, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid transparent;
+            background-image: linear-gradient(rgba(12, 19, 36, 0.6), rgba(12, 19, 36, 0.6)), linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-card:hover {
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 15px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Input styling */
+        .tech-input {
+            background-color: rgba(7, 13, 31, 0.8); /* Darker inset */
+            border: 1px solid rgba(140, 144, 159, 0.3);
+            color: #dce1fb;
+            transition: all 0.3s ease;
+        }
+        
+        .tech-input:focus {
+            outline: none;
+            border-color: #adc6ff;
+            box-shadow: 0 0 0 2px rgba(173, 198, 255, 0.2);
+        }
+
+        /* Button styling */
+        .btn-primary {
+            background: linear-gradient(135deg, #4d8eff, #005ac2);
+            color: #001a42;
+            box-shadow: 0 4px 15px rgba(77, 142, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(77, 142, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* Animations */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(173, 198, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(173, 198, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(173, 198, 255, 0); }
+        }
+    </style>
+</head>
+<body class="text-on-surface min-h-screen flex flex-col font-body-md overflow-x-hidden">
+<!-- TopNavBar (Shared Component) -->
+<!-- Note: "Join Room" is a transactional page, but the prompt explicitly requested TopNavBar. 
+         Active state logic: "Rooms" is the closest logical match, though "Join Room" is a specific action. -->
+<nav class="bg-surface/40 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] flex justify-between items-center px-margin-desktop h-20">
+<div class="flex items-center gap-8">
+<div class="font-headline-xl text-headline-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-tertiary">
+                ScreenBridge
+            </div>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 duration-300 px-3 py-2 rounded-lg font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+                    Dashboard
+                </a>
+<a class="text-primary border-b-2 border-primary pb-1 px-3 py-2 font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+                    Rooms
+                </a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 duration-300 px-3 py-2 rounded-lg font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+                    History
+                </a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 duration-300 px-3 py-2 rounded-lg font-label-md text-label-md scale-95 active:scale-90 transition-transform" href="#">
+                    Devices
+                </a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors">
+                Host Now
+            </button>
+<button class="font-label-md text-label-md btn-primary px-6 py-2 rounded-lg font-bold">
+                Join Room
+            </button>
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden border border-white/10 ml-4">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="A futuristic UI avatar showing a professional user in a sleek, dimly lit tech environment. The lighting is cinematic with subtle blue and purple neon accents reflecting on their face, fitting the high-end, cyberpunk-minimalist aesthetic of the ScreenBridge application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhd0aZYMUiKcRnNfpWPQn5caXvLDrmAiAWNrASXjYlvDt_35hyyyytYv7fSBf-ZyQG7dm_-ND1m6EImtazjYeK_DFyCSSklIM3GeE7gCYwh7u8XRqjGTaLDOOtXC89ka3YDWPotytgkyjrAg2MrJjSqO_2fvl7sYztl3GNYlc5VwIQnp39XPfJ7LsS5n7RqHPI4j7iIzYqS3opFGicUVurC9cnPg9DClK5GfFd3fzcdFsiQyOiHUcrBL_cgjaEF0I3yCnfQsuxIJoo"/>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex items-center justify-center pt-20 px-margin-mobile md:px-margin-desktop relative">
+<!-- Decorative Background Elements -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden z-0 flex items-center justify-center">
+<!-- Simulated connection lines/grid -->
+<div class="w-full h-full opacity-10" style="background-image: radial-gradient(rgba(137, 206, 255, 0.4) 1px, transparent 1px); background-size: 40px 40px;"></div>
+<!-- Central glowing orb behind card -->
+<div class="absolute w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px]"></div>
+</div>
+<!-- Join Room Card -->
+<div class="glass-card w-full max-w-[480px] p-10 rounded-2xl z-10 flex flex-col items-center text-center relative">
+<!-- Header Icon -->
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-6 border border-primary/20 shadow-[0_0_20px_rgba(173,198,255,0.15)] relative">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">
+                    cast_connected
+                </span>
+<!-- Pulse effect -->
+<div class="absolute inset-0 rounded-full border border-primary/50" style="animation: pulse-glow 2s infinite;"></div>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Join a Room</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mb-10">Enter the Room ID to connect instantly.</p>
+<!-- Input Section -->
+<div class="w-full relative mb-8 group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant group-focus-within:text-primary transition-colors">
+                        meeting_room
+                    </span>
+</div>
+<input class="tech-input w-full py-4 pl-12 pr-4 rounded-xl font-label-md text-label-md text-center tracking-widest uppercase placeholder:text-outline-variant/50 placeholder:normal-case placeholder:tracking-normal placeholder:font-body-md" id="roomIdInput" placeholder="e.g. 8X9-2B4-Q1Z" type="text"/>
+<!-- Validation Message Area (Hidden by default) -->
+<div class="absolute -bottom-6 left-0 right-0 text-center opacity-0 transition-opacity duration-300" id="validationMessage">
+<span class="font-label-sm text-label-sm text-error flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px]">error</span>
+                        Invalid Room ID format
+                    </span>
+</div>
+</div>
+<!-- Join Button -->
+<button class="btn-primary w-full py-4 rounded-xl font-label-md text-label-md uppercase tracking-wider flex items-center justify-center gap-2 group relative overflow-hidden" id="joinButton">
+<span class="relative z-10">Connect</span>
+<span class="material-symbols-outlined relative z-10 group-hover:translate-x-1 transition-transform">
+                    arrow_forward
+                </span>
+<!-- Button Hover Effect Background -->
+<div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</button>
+<!-- Secondary Action -->
+<div class="mt-8 flex items-center justify-center gap-2">
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Don't have a code?</span>
+<a class="font-label-sm text-label-sm text-primary hover:text-tertiary transition-colors flex items-center gap-1" href="#">
+                    Host a new room
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</div>
+</div>
+</main>
+<script>
+        // Lightweight interaction for input validation
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('roomIdInput');
+            const button = document.getElementById('joinButton');
+            const validationMsg = document.getElementById('validationMessage');
+
+            // Format input as user types (example: XXX-XXX-XXX)
+            input.addEventListener('input', function(e) {
+                let val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                let formatted = '';
+                for (let i = 0; i < val.length; i++) {
+                    if (i > 0 && i % 3 === 0) formatted += '-';
+                    formatted += val[i];
+                }
+                this.value = formatted.substring(0, 11); // Max length 11 (9 chars + 2 dashes)
+                
+                // Hide validation if typing
+                validationMsg.classList.remove('opacity-100');
+                validationMsg.classList.add('opacity-0');
+                input.classList.remove('border-error');
+            });
+
+            button.addEventListener('click', () => {
+                const val = input.value;
+                // Simple validation check (needs to be 11 chars format XXX-XXX-XXX)
+                if (val.length !== 11) {
+                    validationMsg.classList.remove('opacity-0');
+                    validationMsg.classList.add('opacity-100');
+                    input.classList.add('border-error');
+                    
+                    // Shake animation on error
+                    input.parentElement.animate([
+                        { transform: 'translateX(0)' },
+                        { transform: 'translateX(-5px)' },
+                        { transform: 'translateX(5px)' },
+                        { transform: 'translateX(-5px)' },
+                        { transform: 'translateX(5px)' },
+                        { transform: 'translateX(0)' }
+                    ], { duration: 400, easing: 'ease-in-out' });
+                } else {
+                    // Success state simulation
+                    button.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> <span class="ml-2">Connecting...</span>';
+                    button.classList.add('opacity-80', 'cursor-not-allowed');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = '<span class="material-symbols-outlined">check_circle</span> <span class="ml-2">Connected</span>';
+                        button.classList.replace('btn-primary', 'bg-tertiary-container text-on-tertiary-container');
+                    }, 1500);
+                }
+            });
+        });
+    </script>
+</body></html>
