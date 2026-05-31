@@ -1,16 +1,23 @@
 const express = require('express')
+const path = require("path")
+
+const userRoute = require("./router/user.router.js")
+const router = express.Router()
+
 const app = express()
 const port = 3000
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+
+app.use("/user",userRoute)
+app.use("/", router);
+
+
+router.get("/signup",(req,res)=>{
+  res.send("signup")
 })
-app.get('/login',(req,res)=>{
-    res.send('this is login p0age')
-})
-app.get('/logout',(req,res)=>{
-    res.send('thsis is logout page')
-})
+
 
 
 
