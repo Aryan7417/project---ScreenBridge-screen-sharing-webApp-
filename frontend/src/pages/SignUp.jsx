@@ -130,7 +130,7 @@ export default function SignUp() {
               </motion.div>
             )}
 
-            <form onSubmit={handleSignUp} className="space-y-4">
+            <form onSubmit={handleSignUp}  action="/user" method={POST} className="space-y-4">
               {/* Full Name */}
               <div className="space-y-1.5">
                 <label className="block font-label-sm text-[11px] text-white/60 uppercase tracking-widest">
@@ -142,7 +142,7 @@ export default function SignUp() {
                   </span>
                   <input
                     type="text"
-                    placeholder="Alex Johnson"
+                    placeholder="Enetr name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     disabled={isLoading}
