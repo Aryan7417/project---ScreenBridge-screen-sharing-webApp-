@@ -11,45 +11,52 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setError("");
 
-    if (!email.trim() || !password.trim()) {
-      setError("Please fill in all fields.");
-      return;
+
+
+  const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  if (!email.trim() || !password.trim()) {
+    setError("Please fill in all fields.");
+    return;
+  }
+
+  const res = await fetch(
+    "http://localhost:3000/login",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+        credentials: "include",
+      body: JSON.stringify({
+        email,
+        password
+      })
     }
+  );
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
+  console.log("FETCH RESPONSE", res.status);
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
+const data = await res.text();
+console.log("DATA:", data);
 
-    setIsLoading(true);
+if (data.trim() === "yes you can login") {
 
-    // Simulate network delay
-    setTimeout(() => {
-      setIsLoading(false);
-      const displayName = email.split("@")[0];
-      const formattedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
-      
-      const mockUser = {
-        name: formattedName,
-        email: email.trim(),
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256&h=256",
-      };
+  localStorage.setItem("sb_user", JSON.stringify({
+    email: email,
+    name: email.split("@")[0]
+  }));
 
-      localStorage.setItem("sb_user", JSON.stringify(mockUser));
-      // Dispatch custom event to trigger navbar update
-      window.dispatchEvent(new Event("authChange"));
-      navigate("/");
-    }, 1200);
-  };
+  window.dispatchEvent(new Event("authChange"));
+
+  navigate("/");
+}
+  
+}
+
 
   const handleSocialLogin = (provider) => {
     setIsLoading(true);
@@ -125,7 +132,7 @@ export default function Login() {
               </motion.div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-5">
+            <form onSubmit={handleLogin}  className="space-y-5">
               {/* Email */}
               <div className="space-y-2">
                 <label className="block font-label-sm text-[12px] text-white/60 uppercase tracking-widest">

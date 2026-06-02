@@ -13,9 +13,11 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setError("");
+
+  
 
     if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
       setError("Please fill in all fields.");
@@ -37,6 +39,27 @@ export default function SignUp() {
       return;
     }
 
+    console.log("SIGNUP CLICKED");
+
+
+    const res = await fetch(
+    "http://localhost:3000/signup",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: name,
+        email,
+        password
+      })
+    }
+  )
+  console.log("FETCH SENT");
+
+console.log("FETCH RESPONSE", res.status);
+
     setIsLoading(true);
 
     // Simulate network delay
@@ -54,6 +77,13 @@ export default function SignUp() {
       window.dispatchEvent(new Event("authChange"));
       navigate("/");
     }, 1200);
+
+    const data = await res.json();
+
+    console.log(data);
+
+      navigate("/");
+
   };
 
   const handleSocialSignUp = (provider) => {
@@ -130,7 +160,7 @@ export default function SignUp() {
               </motion.div>
             )}
 
-            <form onSubmit={handleSignUp}  action="/user" method={POST} className="space-y-4">
+            <form onSubmit={handleSignUp}  className="space-y-4">
               {/* Full Name */}
               <div className="space-y-1.5">
                 <label className="block font-label-sm text-[11px] text-white/60 uppercase tracking-widest">
@@ -170,6 +200,7 @@ export default function SignUp() {
                   />
                 </div>
               </div>
+              
 
               {/* Password */}
               <div className="space-y-1.5">
