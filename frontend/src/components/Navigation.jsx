@@ -28,14 +28,27 @@ export default function Navigation() {
     };
   }, []);
 
-  const handleSignOut = () => {
+const handleSignOut = async () => {
+  try {
+    await fetch("http://localhost:3000/logout", {
+      method: "GET",
+      credentials: "include",
+    });
+
     localStorage.removeItem("sb_user");
+
     setUser(null);
     setIsProfileOpen(false);
     setIsOpen(false);
+
     window.dispatchEvent(new Event("authChange"));
+
     navigate("/");
-  };
+
+  } catch (err) {
+    console.error("Logout Error:", err);
+  }
+};
 
   const navLinks = [
     { label: "Dashboard", path: "/host/default" },

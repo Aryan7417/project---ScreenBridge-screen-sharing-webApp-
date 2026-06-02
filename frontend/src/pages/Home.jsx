@@ -6,6 +6,7 @@ import Navigation from "../components/Navigation";
 const TOTAL_FRAMES = 100;
 
 // ─── Frame Preloader ──────────────────────────────────────────────────────────
+
 function useFrameSequence() {
   const imagesRef = useRef([]);
   const [loadedCount, setLoadedCount] = useState(0);

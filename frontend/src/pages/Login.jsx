@@ -11,10 +11,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-
-
-
-  const handleLogin = async (e) => {
+const handleLogin = async (e) => {
   e.preventDefault();
   setError("");
 
@@ -40,10 +37,10 @@ export default function Login() {
 
   console.log("FETCH RESPONSE", res.status);
 
-const data = await res.text();
-console.log("DATA:", data);
+  const data = await res.text();
+  console.log("DATA:", data);
 
-if (data.trim() === "yes you can login") {
+  if (data.trim() === "yes you can login") {
 
   localStorage.setItem("sb_user", JSON.stringify({
     email: email,
@@ -57,8 +54,7 @@ if (data.trim() === "yes you can login") {
   
 }
 
-
-  const handleSocialLogin = (provider) => {
+const handleSocialLogin = (provider) => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -71,9 +67,10 @@ if (data.trim() === "yes you can login") {
       window.dispatchEvent(new Event("authChange"));
       navigate("/");
     }, 800);
-  };
+};
 
-  return (
+
+return (
     <div className="min-h-screen bg-[#020617] text-white flex flex-col relative overflow-hidden">
       <Navigation />
 

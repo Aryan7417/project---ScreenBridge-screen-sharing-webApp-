@@ -13,7 +13,8 @@ export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSignUp = async (e) => {
+
+const handleSignUp = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -58,7 +59,7 @@ export default function SignUp() {
   )
   console.log("FETCH SENT");
 
-console.log("FETCH RESPONSE", res.status);
+  console.log("FETCH RESPONSE", res.status);
 
     setIsLoading(true);
 
@@ -84,9 +85,10 @@ console.log("FETCH RESPONSE", res.status);
 
       navigate("/");
 
-  };
+};
 
-  const handleSocialSignUp = (provider) => {
+
+const handleSocialSignUp = (provider) => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -100,6 +102,7 @@ console.log("FETCH RESPONSE", res.status);
       navigate("/");
     }, 800);
   };
+
 
   return (
     <div className="min-h-screen bg-[#020617] text-white flex flex-col relative overflow-hidden">
