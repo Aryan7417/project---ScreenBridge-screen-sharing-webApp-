@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+
+
 import Home from "./pages/Home";
 import CreateRoom from "./pages/CreateRoom";
 import JoinRoom from "./pages/JoinRoom";
@@ -10,12 +13,12 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import "./App.css";
-import { useEffect } from "react";
-import socket from "../src/services/socket.js"
-import peer from "./services/peer.js"
+// import { useEffect } from "react";
+// import socket from "../src/services/socket.js"
+// import peer from "./services/peer.js"
 
 
-window.socket = socket;
+// window.socket = socket;
 
 
 
@@ -36,48 +39,138 @@ const PageTransition = ({ children }) => {
 };
 
 
+// const startScreenShare = async () => {
+
+//   const stream = await navigator.mediaDevices.getDisplayMedia({
+//     video: true,
+//     audio: false
+//   });
+
+//   stream.getTracks().forEach((track) => {
+
+//     peer.addTrack(track, stream);
+
+//   });
+
+// }
+
+
+
+
+
 function App() {
   const location = useLocation();
 
-  useEffect(()=>{
-    console.log(socket.connected)
-
-    
-    socket.on("connect",()=>{
-    console.log("Connected :",socket.id);
-    socket.emit("join-room","room1");
-
-    });
-    
-    socket.on("user-joined", async(id)=>{
-
-   console.log("New User Joined :",id);
-
-   const offer = await peer.createOffer();
-
-   await peer.setLocalDescription(offer);
-
-   socket.emit("offer",{
-      offer,
-      to:id
-   });
-
-});
-
-socket.on("offer",(data)=>{
-  console.log("offer Recived:",data)
-})
+  // const [remoteSocketId, setRemoteSocketId] = useState(null);
 
 
-    return ()=>{
+  // peer.onicecandidate = async (event) => {
 
-      socket.off("connect");
-      socket.off("user-joined");
-      socket.off("offer")
+  //   if (event.candidate) {
 
-    }
+  //     socket.emit("ice-candidate", {
+  //       to: remoteSocketId,
+  //       candidate: event.candidate
+  //     });
 
-  },[]);
+  //   }
+
+  // }
+
+
+  // useEffect(() => {
+  //   console.log(socket.connected)
+
+
+  //   socket.on("connect", () => {
+  //     console.log("Connected :", socket.id);
+  //     socket.emit("join-room", "room1");
+
+  //   });
+
+  //   socket.on("user-joined", async (id) => {
+  //     setRemoteSocketId(id);
+  //     //setRemoteSocketId(data.from);
+
+  //     console.log("New User Joined :", id);
+
+  //     const offer = await peer.createOffer();
+
+  //     await peer.setLocalDescription(offer);
+
+  //     socket.emit("offer", {
+  //       offer,
+  //       to: id
+  //     });
+
+
+  //   });
+
+  //   socket.on("offer", async (data) => {
+
+  //     console.log("Offer Received :", data);
+
+  //     if (peer.signalingState !== "stable") {
+
+  //       console.log("Skipping duplicate offer");
+
+  //       return;
+
+  //     }
+
+  //     setRemoteSocketId(data.from);
+
+  //     await peer.setRemoteDescription(data.offer);
+
+  //     const answer = await peer.createAnswer();
+
+  //     await peer.setLocalDescription(answer);
+
+  //     socket.emit("answer", {
+  //       answer,
+  //       to: data.from
+  //     });
+
+  //   });
+  //   socket.on("ice-candidate", async (data) => {
+
+  //     console.log("ICE Candidate Received");
+
+  //     await peer.addIceCandidate(data.candidate);
+
+  //   });
+
+
+  //   socket.on("answer", async (data) => {
+
+  //     console.log("Answer Received :", data);
+  //     if (!peer.currentLocalDescription) {
+
+
+  //       await peer.setRemoteDescription(data.answer);
+  //     }
+
+  //   });
+
+  //   // socket.on("ice-candidate", async (data) => {
+
+  //   //   console.log("ICE Candidate Received");
+
+  //   //   await peer.addIceCandidate(data.candidate);
+
+  //   // });
+
+  //   return () => {
+
+  //     socket.off("connect");
+  //     socket.off("user-joined");
+  //     socket.off("offer")
+  //     socket.off("answer")
+  //     socket.off("ice-candidate")
+
+  //   }
+
+  // }, []);
 
 
   return (
@@ -203,6 +296,9 @@ socket.on("offer",(data)=>{
               <NotFound />
             </PageTransition>
           }
+        />
+        <Route path="/room/:roomId"
+          element={<JoinRoom />}
         />
       </Routes>
     </AnimatePresence>

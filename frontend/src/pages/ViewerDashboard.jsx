@@ -5,6 +5,9 @@ import Navigation from "../components/Navigation";
 import FramePlayer from "../components/FramePlayer";
 import CanvasChart from "../components/CanvasChart";
 
+import socket from "../services/socket.js";
+import peer from "../services/peer.js";
+
 export default function ViewerDashboard() {
   const { roomId } = useParams();
   const navigate = useNavigate();
@@ -18,12 +21,141 @@ export default function ViewerDashboard() {
   const videoContainerRef = useRef(null);
   const [currentUser, setCurrentUser] = useState(null);
 
+  const remoteSocketIdRef = useRef(null);
+
+  const remoteVideoRef = useRef(null)
+  //const [remoteSocketId, setRemoteSocketId] = useState(null);
+  //const [currentUser, setCurrentUser] = useState(null);
+
   useEffect(() => {
+
+    socket.off("offer");
+    socket.off("answer");
+    socket.off("ice-candidate");
+
+    socket.emit("join-room", roomId);
+
+    console.log("Viewer joined room");
+
     const stored = localStorage.getItem("sb_user");
     if (stored) {
       setCurrentUser(JSON.parse(stored));
     }
+
+
+    peer.onicecandidate = async (event) => {
+
+      if (event.candidate) {
+
+        socket.emit("ice-candidate", {
+          to: remoteSocketIdRef.current,
+          candidate: event.candidate
+        });
+
+      }
+
+    }
+
+    peer.ontrack = (event) => {
+
+      console.log("remote Stream recoived");
+
+      const remoteStream = event.streams[0];
+
+      console.log(remoteStream);
+
+      if (remoteVideoRef.current) {
+
+        remoteVideoRef.current.srcObject =
+          remoteStream;
+
+        remoteVideoRef.current.play();
+
+      }
+
+    }
+
+    socket.emit("join-room", roomId);
+
+
+    socket.on("ice-candidate", async (data) => {
+
+      console.log("ICE Candidate Received");
+
+      await peer.addIceCandidate(data.candidate);
+
+    });
+
+
+    socket.on("answer", async (data) => {
+
+      if (!peer.remoteDescription) {
+
+        await peer.setRemoteDescription(data.answer);
+
+      }
+
+    });
+
+
+
+    socket.on("offer", async (data) => {
+
+      try {
+
+        console.log("Offer Received");
+
+        if (peer.signalingState !== "stable") {
+
+          console.log("Skipping duplicate offer");
+
+          return;
+
+        }
+
+        remoteSocketIdRef.current = data.from;
+
+        await peer.setRemoteDescription(data.offer);
+
+        if (peer.signalingState !== "have-remote-offer") {
+
+          console.log("Wrong signaling state");
+
+          return;
+
+        }
+
+        const answer = await peer.createAnswer();
+
+        await peer.setLocalDescription(answer);
+
+        socket.emit("answer", {
+          answer,
+          to: data.from
+        });
+
+      } catch (err) {
+
+        console.log("Offer Error :", err);
+
+      }
+
+    });
+
+    return () => {
+
+      socket.off("offer");
+      socket.off("answer");
+      socket.off("ice-candidate");
+
+    }
+
+
   }, []);
+
+  useEffect(() => {
+    console.log("vioer efferc Running")
+  })
 
   // Buffer state simulation on enter
   useEffect(() => {
@@ -107,10 +239,10 @@ export default function ViewerDashboard() {
         >
           {/* FramePlayer Canvas */}
           <div className="absolute inset-0 z-0">
-            <FramePlayer
-              isPlaying={isPlaying && !showBuffering}
-              currentProgress={scrubberPos}
-              onFrameChange={handleFrameChange}
+            <video
+              ref={remoteVideoRef}
+              autoPlay
+              playsInline
               className="w-full h-full object-cover"
             />
             {/* Dark gradient mapping overlay */}

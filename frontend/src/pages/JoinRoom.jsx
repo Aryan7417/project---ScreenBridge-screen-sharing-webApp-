@@ -1,7 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useParams } from "react-router-dom";
+
 import Navigation from "../components/Navigation";
+import peer from "../services/peer.js"
+
+
+import socket from "../services/socket.js";
 
 export default function JoinRoom() {
   const navigate = useNavigate();
@@ -10,6 +16,7 @@ export default function JoinRoom() {
   const [error, setError] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [connected, setConnected] = useState(false);
+  const { roomId } = useParams();
 
   // If a code is passed in the URL (e.g., from Home page), prefill it
   useEffect(() => {
@@ -19,16 +26,34 @@ export default function JoinRoom() {
     }
   }, [searchParams]);
 
+
+
+
   const formatInputCode = (val) => {
-    let clean = val.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
-    let formatted = "";
-    for (let i = 0; i < clean.length; i++) {
-      if (i > 0 && i % 3 === 0) formatted += "-";
-      formatted += clean[i];
+    let clean =
+      val.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+    if (clean.length <= 2) {
+      return clean;
     }
-    // Limit to 11 chars (9 chars + 2 dashes)
-    return formatted.substring(0, 11);
-  };
+    if (clean.length <= 5) {
+      return `SB-${clean.slice(2)}`;
+    }
+    return `SB-${clean.slice(2, 5)}-${clean.slice(5, 8)}`;
+  }
+
+  
+  const startScreenShare = async () => {
+
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: true,
+      audio: false
+    });
+
+    stream.getTracks().forEach((track) => {
+      peer.addTrack(track, stream);
+    });
+
+  }
 
   const handleInputChange = (e) => {
     setRoomCode(formatInputCode(e.target.value));
@@ -40,16 +65,18 @@ export default function JoinRoom() {
     // Validate length: must be at least 8-11 characters to make sense
     if (roomCode.replace(/-/g, "").length < 6) {
       setError(true);
+
       return;
     }
 
+    socket.emit("join-room", roomCode);
     setConnecting(true);
 
     // Simulate connecting sequence
     setTimeout(() => {
       setConnecting(false);
       setConnected(true);
-      
+
       setTimeout(() => {
         // Redirect to waiting room
         navigate(`/waiting/${roomCode}`);
@@ -80,7 +107,7 @@ export default function JoinRoom() {
         </div>
 
         {/* Join Room Card */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -109,9 +136,8 @@ export default function JoinRoom() {
             <motion.input
               animate={error ? "shake" : "idle"}
               variants={inputShakeVariants}
-              className={`tech-input w-full py-4 pl-12 pr-4 rounded-xl font-label-md text-label-md text-center tracking-widest uppercase placeholder:text-outline-variant/50 placeholder:normal-case placeholder:tracking-normal placeholder:font-body-md ${
-                error ? "border-error focus:border-error focus:ring-error" : ""
-              }`}
+              className={`tech-input w-full py-4 pl-12 pr-4 rounded-xl font-label-md text-label-md text-center tracking-widest uppercase placeholder:text-outline-variant/50 placeholder:normal-case placeholder:tracking-normal placeholder:font-body-md ${error ? "border-error focus:border-error focus:ring-error" : ""
+                }`}
               placeholder="e.g. 8X9-2B4-Q1Z"
               type="text"
               value={roomCode}
@@ -121,7 +147,7 @@ export default function JoinRoom() {
 
             {/* Validation Message Area */}
             {error && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="absolute -bottom-6 left-0 right-0 text-center"
@@ -140,13 +166,12 @@ export default function JoinRoom() {
             whileTap={!(connecting || connected) ? { scale: 0.98 } : {}}
             onClick={handleConnect}
             disabled={connecting || connected}
-            className={`w-full py-4 rounded-xl font-label-md text-label-md uppercase tracking-wider flex items-center justify-center gap-2 group relative overflow-hidden transition-all font-bold ${
-              connected 
+            className={`w-full py-4 rounded-xl font-label-md text-label-md uppercase tracking-wider flex items-center justify-center gap-2 group relative overflow-hidden transition-all font-bold ${connected
                 ? "bg-emerald-500 text-surface-container-lowest"
                 : connecting
                   ? "bg-primary/50 text-white cursor-wait"
                   : "bg-gradient-to-r from-[#4d8eff] to-[#005ac2] text-white shadow-[0_4px_15px_rgba(77,142,255,0.3)] hover:shadow-[0_6px_20px_rgba(77,142,255,0.5)] cursor-pointer"
-            }`}
+              }`}
           >
             {connected ? (
               <>

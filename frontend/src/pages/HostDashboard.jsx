@@ -1,14 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "../components/Sidebar";
 import FramePlayer from "../components/FramePlayer";
 import CanvasChart from "../components/CanvasChart";
+import socket from "../services/socket";
+import peer from "../services/peer";
+
+
 
 export default function HostDashboard() {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const myVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
+
+  // const [remoteSocketId, setRemoteSocketId] = useState(null);
+  const remoteSocketIdRef = useRef(null);
 
   // Retrieve states passed from CreateRoom, or fallback to defaults
   const passedState = location.state || {};
@@ -30,6 +39,29 @@ export default function HostDashboard() {
         return Math.max(8, Math.min(18, Math.round(prev + delta)));
       });
 
+
+      socket.emit("join-room", roomId)
+
+      peer.onicecandidate = async (event) => {
+
+        if (event.candidate) {
+
+          console.log("Sending ICE");
+
+          socket.emit("ice-candidate", {
+           to: remoteSocketIdRef.current,
+            candidate: event.candidate
+          });
+
+        }
+
+      }
+
+
+
+
+
+
       // Periodically join/leave participants
       if (Math.random() > 0.8) {
         setParticipantsCount(prev => {
@@ -39,8 +71,122 @@ export default function HostDashboard() {
       }
     }, 3000);
 
+    socket.emit("join-room", roomId)
+
+    //send user-join 
+
+    socket.on("user-joined", (id) => {
+
+      console.log("Viewer Joined :", id);
+
+      //setRemoteSocketId(id);
+      remoteSocketIdRef.current = id;
+
+    });
+
+    // socket.on("user-joined", async (id) => {
+
+    //   setRemoteSocketId(id);
+
+    //   if (peer.signalingState !== "stable") return;
+    //   const offer = await peer.createOffer();
+
+    //   await peer.setLocalDescription(offer);
+
+    //   socket.emit("offer", {
+    //     offer,
+    //     to: id
+    //   });
+
+    // });
+
+    //SEND offer receive
+
+    socket.on("offer", async (data) => {
+
+      console.log("Offer Received");
+
+      try {
+
+        if (peer.signalingState !== "stable") {
+
+          console.log("Skipping duplicate offer");
+
+          return;
+
+        }
+
+        setRemoteSocketId(data.from);
+
+        await peer.setRemoteDescription(data.offer);
+
+        if (peer.signalingState !== "have-remote-offer") {
+
+          console.log("Wrong state after remote description");
+
+          return;
+
+        }
+
+        const answer = await peer.createAnswer();
+
+        if (peer.signalingState !== "have-remote-offer") {
+
+          console.log("State changed before answer");
+
+          return;
+
+        }
+
+        await peer.setLocalDescription(answer);
+
+        socket.emit("answer", {
+          answer,
+          to: data.from
+        });
+
+      } catch (err) {
+
+        console.log("Offer Error :", err);
+
+      }
+
+    });
+
+    //recive answer
+
+    socket.on("answer", async (data) => {
+
+
+
+      if (!peer.remoteDescription) {
+
+        await peer.setRemoteDescription(data.answer);
+
+      }
+
+    });
+
+
+    socket.on("ice-candidate", async (data) => {
+
+      console.log("ICE Candidate Received");
+
+      await peer.addIceCandidate(data.candidate);
+
+    });
+
     return () => clearInterval(timer);
+    socket.off("user-joined");
+    socket.off("offer");
+    socket.off("answer");
+    socket.off("ice-candidate");
   }, []);
+
+
+  useEffect(()=>{
+    console.log("host useEffect Running")
+  })
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(roomId).then(() => {
@@ -49,9 +195,48 @@ export default function HostDashboard() {
     });
   };
 
-  const toggleSharing = () => {
-    setIsSharing(!isSharing);
-  };
+  const toggleSharing = async () => {
+
+    const stream =
+      await navigator.mediaDevices.getDisplayMedia({
+
+        video: true,
+        audio: false
+
+      });
+
+    myVideoRef.current.srcObject = stream;
+
+    peer.getSenders().forEach((sender) => {
+
+      peer.removeTrack(sender);
+
+    });
+    stream.getTracks().forEach((track) => {
+
+      peer.addTrack(track, stream);
+      console.log("Track Added");
+
+    });
+    console.log(remoteSocketIdRef.current)
+
+    if (remoteSocketIdRef.current) {
+
+      const offer = await peer.createOffer();
+
+      await peer.setLocalDescription(offer);
+
+      socket.emit("offer", {
+        offer,
+        to: remoteSocketIdRef.current
+
+      });
+
+    }
+
+    setIsSharing(true);
+
+  }
 
   const handleEndSession = () => {
     if (window.confirm("Are you sure you want to end this transmission session? This will disconnect all active viewers.")) {
@@ -66,13 +251,13 @@ export default function HostDashboard() {
 
       {/* Main Content Canvas */}
       <main className="md:ml-64 relative z-10 p-6 md:p-12 min-h-screen flex flex-col">
-        
+
         {/* Mobile Nav Header */}
         <div className="flex md:hidden items-center justify-between mb-8 border-b border-white/10 pb-4">
           <span className="font-headline-xl text-headline-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-tertiary">
             ScreenBridge
           </span>
-          <button 
+          <button
             onClick={() => navigate("/")}
             className="text-primary font-label-md text-label-sm border border-primary/30 px-3 py-1 rounded-full bg-primary/5"
           >
@@ -89,9 +274,9 @@ export default function HostDashboard() {
               System Online • Local Node Active
             </p>
           </div>
-          
+
           <div className="flex gap-4 self-stretch sm:self-auto">
-            <button 
+            <button
               onClick={() => setShowPreferences(!showPreferences)}
               className="w-full sm:w-auto glass-panel text-on-surface-variant hover:text-primary hover:bg-white/10 px-4 py-2.5 rounded-lg font-label-md text-label-md transition-all flex items-center justify-center gap-2 cursor-pointer border border-white/10"
             >
@@ -103,23 +288,23 @@ export default function HostDashboard() {
 
         {/* Dashboard Grid Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 flex-1">
-          
+
           {/* Left Column: Controls & Info (4 cols) */}
           <div className="xl:col-span-4 flex flex-col gap-6">
-            
+
             {/* Room Info Card */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
               className="glass-panel rounded-xl p-6 relative overflow-hidden group border border-white/10"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-              
+
               <div className="flex items-center justify-between mb-6 relative z-10">
                 <h2 className="font-headline-lg text-[20px] text-on-surface font-bold">Room Alpha</h2>
                 <div className="bg-primary/20 text-primary border-l-2 border-primary px-3 py-1 font-label-sm text-label-sm rounded-r flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]">lock</span> 
+                  <span className="material-symbols-outlined text-[16px]">lock</span>
                   Secure
                 </div>
               </div>
@@ -131,7 +316,7 @@ export default function HostDashboard() {
                     <span className="font-label-md text-label-md tracking-[0.15em] text-primary font-bold">
                       {roomId}
                     </span>
-                    <button 
+                    <button
                       onClick={handleCopyCode}
                       className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center"
                       title="Copy code"
@@ -168,31 +353,30 @@ export default function HostDashboard() {
             </motion.div>
 
             {/* Broadcast Controls Card */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 }}
               className="glass-panel rounded-xl p-6 relative overflow-hidden flex-1 flex flex-col justify-center border border-white/10"
             >
               <h3 className="font-label-md text-label-md text-on-surface-variant mb-6 uppercase tracking-widest text-center">Broadcast Control</h3>
-              
+
               <div className="flex flex-col gap-4">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={toggleSharing}
-                  className={`w-full font-headline-lg text-[18px] md:text-headline-lg py-5 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 cursor-pointer font-bold ${
-                    isSharing
-                      ? "bg-gradient-to-r from-secondary-container to-secondary text-white shadow-[0_0_20px_rgba(208,188,255,0.4)]"
-                      : "bg-gradient-to-r from-primary to-primary-container text-on-primary shadow-[0_0_20px_rgba(173,198,255,0.4)]"
-                  }`}
+                  className={`w-full font-headline-lg text-[18px] md:text-headline-lg py-5 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 cursor-pointer font-bold ${isSharing
+                    ? "bg-gradient-to-r from-secondary-container to-secondary text-white shadow-[0_0_20px_rgba(208,188,255,0.4)]"
+                    : "bg-gradient-to-r from-primary to-primary-container text-on-primary shadow-[0_0_20px_rgba(173,198,255,0.4)]"
+                    }`}
                 >
                   <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                     {isSharing ? "screen_share_indicator" : "screen_share"}
                   </span>
                   {isSharing ? "Stop Broadcasting" : "Start Sharing"}
                 </motion.button>
-                
+
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -213,7 +397,7 @@ export default function HostDashboard() {
                   <span className="text-primary font-bold">{isSharing ? "Auto (High)" : "Standby (Low)"}</span>
                 </div>
                 <div className="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden relative">
-                  <motion.div 
+                  <motion.div
                     animate={{ width: isSharing ? "75%" : "15%" }}
                     transition={{ type: "spring", stiffness: 80 }}
                     className="h-full bg-gradient-to-r from-secondary to-primary rounded-full relative"
@@ -229,14 +413,14 @@ export default function HostDashboard() {
           </div>
 
           {/* Right Column: Local Preview & Monitor (8 cols) */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             className="xl:col-span-8 flex flex-col h-full"
           >
             <div className="glass-panel rounded-xl p-2 flex-grow flex flex-col glow-shadow relative overflow-hidden min-h-[500px] border border-white/10">
-              
+
               {/* Preview Header */}
               <div className="flex justify-between items-center px-4 py-3 border-b border-white/5">
                 <div className="flex items-center gap-3">
@@ -255,16 +439,22 @@ export default function HostDashboard() {
 
               {/* Video Canvas Container */}
               <div className="flex-grow bg-surface-container-lowest m-2 rounded-lg border border-white/5 relative overflow-hidden flex items-center justify-center">
-                
+
                 {/* Canvas Player for 100 JPEG Frames */}
-                <FramePlayer isPlaying={isSharing} className="absolute inset-0 w-full h-full object-cover" />
-                
+                <video
+                  ref={myVideoRef}
+                  autoPlay
+                  muted
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-surface/10 to-surface/60 pointer-events-none" />
 
                 {/* Overlay Status Standby (Only visible when not sharing) */}
                 <AnimatePresence>
                   {!isSharing && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -307,7 +497,7 @@ export default function HostDashboard() {
         {showPreferences && (
           <div className="fixed inset-0 z-50 flex justify-end">
             {/* Backdrop */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
@@ -315,7 +505,7 @@ export default function HostDashboard() {
               className="absolute inset-0 bg-black"
             />
             {/* Drawer */}
-            <motion.div 
+            <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -324,7 +514,7 @@ export default function HostDashboard() {
             >
               <div className="flex justify-between items-center pb-4 border-b border-white/5 mb-6">
                 <h3 className="font-headline-lg text-[18px] font-bold text-white">Broadcast Preferences</h3>
-                <button 
+                <button
                   onClick={() => setShowPreferences(false)}
                   className="text-on-surface-variant hover:text-white"
                 >

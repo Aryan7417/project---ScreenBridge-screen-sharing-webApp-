@@ -44,11 +44,15 @@ export default function CreateRoom() {
     });
   };
 
+
   const handleStartSharing = () => {
     // Navigate to host dashboard with this room code
     // Pass passcode/waiting room settings via state
-    navigate(`/host/${roomId}`, { 
-      state: { passcode: passcodeLock ? passcode : null, waitingRoom } 
+    navigate(`/host/${roomId}`, {
+      state: {
+        passcode: passcodeLock ? passcode : null,
+        waitingRoom
+      }
     });
   };
 
@@ -69,7 +73,7 @@ export default function CreateRoom() {
           <span className="font-headline-xl text-headline-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-tertiary">
             ScreenBridge
           </span>
-          <button 
+          <button
             onClick={() => navigate("/")}
             className="text-primary font-label-md text-label-sm border border-primary/30 px-3 py-1 rounded-full bg-primary/5"
           >
@@ -78,7 +82,7 @@ export default function CreateRoom() {
         </div>
 
         {/* Page Header */}
-        <motion.header 
+        <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -92,9 +96,9 @@ export default function CreateRoom() {
 
         {/* Bento Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 h-full">
-          
+
           {/* Main Generator Card (Spans 8 cols) */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -103,7 +107,7 @@ export default function CreateRoom() {
             {/* Decorative top-left highlight */}
             <div className="absolute top-0 left-0 w-32 h-[1px] bg-gradient-to-r from-primary to-transparent"></div>
             <div className="absolute top-0 left-0 w-[1px] h-32 bg-gradient-to-b from-primary to-transparent"></div>
-            
+
             <div className="p-6 md:p-8 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded bg-primary/10 border border-primary/20 flex items-center justify-center">
@@ -120,16 +124,16 @@ export default function CreateRoom() {
             <div className="flex-1 flex flex-col items-center justify-center p-8 md:p-12 text-center relative overflow-hidden min-h-[300px]">
               {/* Central visual element behind code */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-primary/5 rounded-full blur-[60px] pointer-events-none"></div>
-              
+
               <p className="font-label-sm text-label-sm text-on-surface-variant mb-4 uppercase tracking-[0.2em]">Unique Room Identifier</p>
-              
+
               <div className="relative group cursor-copy" title="Click to copy" onClick={copyToClipboard}>
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.02 }}
                   className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"
                 />
-                <div 
-                  className="font-label-md text-[3rem] sm:text-[4.5rem] md:text-[5.5rem] leading-none tracking-wider text-white relative z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" 
+                <div
+                  className="font-label-md text-[3rem] sm:text-[4.5rem] md:text-[5.5rem] leading-none tracking-wider text-white relative z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
                   style={{ fontFamily: "'JetBrains Mono', monospace" }}
                 >
                   {roomId ? (
@@ -157,7 +161,7 @@ export default function CreateRoom() {
                   </span>
                   {copiedLink ? "Copied Room Link!" : "Copy Room Link"}
                 </motion.button>
-                
+
                 <motion.button
                   whileHover={{ scale: 1.03, boxShadow: "0 0 25px rgba(59,130,246,0.5)" }}
                   whileTap={{ scale: 0.97 }}
@@ -172,7 +176,7 @@ export default function CreateRoom() {
           </motion.div>
 
           {/* Side Settings Column (Spans 4 cols) */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -181,7 +185,7 @@ export default function CreateRoom() {
             {/* Security Settings Card */}
             <div className="glass-panel rounded-xl p-6 relative overflow-hidden border border-white/10 group">
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
-              
+
               <div className="flex items-center gap-3 mb-6">
                 <span className="material-symbols-outlined text-outline">admin_panel_settings</span>
                 <h3 className="font-label-md text-[16px] text-on-surface font-semibold">Security Protocol</h3>
@@ -194,15 +198,14 @@ export default function CreateRoom() {
                     <span className="font-body-md text-body-md text-on-surface">Waiting Room</span>
                     <span className="font-label-sm text-label-sm text-on-surface-variant">Admit participants manually</span>
                   </div>
-                  <div 
+                  <div
                     onClick={() => setWaitingRoom(!waitingRoom)}
-                    className={`relative w-11 h-6 rounded-full border transition-colors flex items-center p-[2px] ${
-                      waitingRoom 
-                        ? "bg-primary/20 border-primary" 
+                    className={`relative w-11 h-6 rounded-full border transition-colors flex items-center p-[2px] ${waitingRoom
+                        ? "bg-primary/20 border-primary"
                         : "bg-surface-container-high border-white/10"
-                    }`}
+                      }`}
                   >
-                    <motion.div 
+                    <motion.div
                       layout
                       className={`w-4 h-4 rounded-full ${waitingRoom ? "bg-primary shadow-[0_0_5px_rgba(173,198,255,0.8)]" : "bg-outline-variant"}`}
                       animate={{ x: waitingRoom ? 20 : 0 }}
@@ -219,15 +222,14 @@ export default function CreateRoom() {
                     <span className="font-body-md text-body-md text-on-surface">Passcode Lock</span>
                     <span className="font-label-sm text-label-sm text-on-surface-variant">Require PIN to join</span>
                   </div>
-                  <div 
+                  <div
                     onClick={() => setPasscodeLock(!passcodeLock)}
-                    className={`relative w-11 h-6 rounded-full border transition-colors flex items-center p-[2px] ${
-                      passcodeLock 
-                        ? "bg-primary/20 border-primary" 
+                    className={`relative w-11 h-6 rounded-full border transition-colors flex items-center p-[2px] ${passcodeLock
+                        ? "bg-primary/20 border-primary"
                         : "bg-surface-container-high border-white/10"
-                    }`}
+                      }`}
                   >
-                    <motion.div 
+                    <motion.div
                       layout
                       className={`w-4 h-4 rounded-full ${passcodeLock ? "bg-primary shadow-[0_0_5px_rgba(173,198,255,0.8)]" : "bg-outline-variant"}`}
                       animate={{ x: passcodeLock ? 20 : 0 }}
@@ -239,7 +241,7 @@ export default function CreateRoom() {
                 {/* Collapsible Passcode Input */}
                 <AnimatePresence>
                   {passcodeLock && (
-                    <motion.div 
+                    <motion.div
                       initial={{ height: 0, opacity: 0, marginTop: 0 }}
                       animate={{ height: "auto", opacity: 1, marginTop: 8 }}
                       exit={{ height: 0, opacity: 0, marginTop: 0 }}
@@ -248,7 +250,7 @@ export default function CreateRoom() {
                     >
                       <div className="bg-surface-container-highest/50 rounded-lg border border-white/5 p-3 flex items-center justify-between">
                         <span className="font-label-md text-label-md text-primary tracking-widest font-bold">{passcode}</span>
-                        <button 
+                        <button
                           onClick={generateNewPasscode}
                           className="text-on-surface-variant hover:text-white transition-colors flex items-center justify-center p-1"
                         >
